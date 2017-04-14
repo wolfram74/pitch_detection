@@ -1,0 +1,12 @@
+#########sample logs
+keenan:
+fastest chromatic scale (sample_1.txt)
+fastest repeated note (sample_2.txt)
+chord sampler (A, G, C and F) (sample_3.txt)
+C major scale in a reasonable tempo (sample_4.txt)
+brandi:
+C major scale(sample_5.txt)
+
+#########references
+http://www.cs.uregina.ca/Research/Techreports/2003-06.pdf
+

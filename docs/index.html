@@ -1,11 +1,45 @@
 <html>
 <head>
   <title>Pitch Detection of stringed instruments</title>
+  <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<script type="text/javascript">
+window.onload = function(){
+
+  if(typeof MathJax !== 'undefined'){
+      MathJax.Hub.Config({
+      tex2jax: {inlineMath: [["$&","&$"]]}
+    });
+    }else{
+      console.log('mathjax didnt load')
+    }
+  }
+</script>
 </head>
 <body>
   <div>
     <h2>physics</h2>
-    <p>a string supports oscillations</p>
+    <p>Neglecting transients a string supports oscillations of the form</p>
+    <div class='eqn'>
+      $&\Sigma_{n=0}^\infty a_n sin(n*\omega_0 t)&$
+    </div>
+    <p>
+      And sound waves to match.
+    </p>
+  <div>
+    <h2>Data</h2>
+    <p>
+      Taking the fourier transform from the web audio API described <a href="https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode">here</a> with samples set at 2^11 we get curves like
+    </p>
+    <img src="./imgs/figure_1.png" width='100%'>
+    <p>
+      which is the curve for time 1426709547141 in sample_1.txt
+    </p>
   </div>
+  </div>
+    <div class='eqn'>
+      $&hold&$
+    </div>
 </body>
 </html>
