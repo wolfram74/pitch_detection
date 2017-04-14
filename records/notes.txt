@@ -8,5 +8,13 @@ brandi:
 C major scale(sample_5.txt)
 
 #########references
+a review of methods
 http://www.cs.uregina.ca/Research/Techreports/2003-06.pdf
 
+how frequency data is calculated in web audio api
+https://webaudio.github.io/web-audio-api/#current-frequency-data
+
+how bin width is calculated in general (time series sample frequency is 44100 hz)
+http://support.ircam.fr/docs/AudioSculpt/3.0/co/FFT%20Size.html
+
+####
