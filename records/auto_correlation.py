@@ -1,7 +1,7 @@
 from matplotlib import pyplot
 import data_loader
 import numpy
-
+import time
 def auto_correlation(frequency_data):
     output = []
     bin_count = len(frequency_data)
@@ -23,9 +23,12 @@ def max_index(data):
 
 def total_scan(data, keys):
     picks = []
+    start = time.time()
     for i in range(len(keys)):
         frequency_data = data[keys[i]]
         picks.append(max_index(auto_correlation(frequency_data)))
+    end = time.time()
+    print(end-start, len(keys), (end-start)/len(keys) )
     return picks
 
 sample_data = data_loader.load_files()
