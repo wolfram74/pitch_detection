@@ -1,6 +1,21 @@
 import os
 import re
 
+
+def max_index(data):
+    # finds max index after positive derivatives found
+    index= 0
+    value = 0
+    positive_deltas = False
+    for i in range(0, len(data)-1):
+        if not positive_deltas:
+            if data[i+1]-data[i] >0:
+                positive_deltas = True
+        if positive_deltas and (data[i] > value):
+            index = i
+            value = data[i]
+    return index
+
 def load_files():
     print('loading files')
     output = {}

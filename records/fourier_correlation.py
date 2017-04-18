@@ -2,6 +2,8 @@ from matplotlib import pyplot
 import data_loader
 import numpy
 import time
+import numpy
+
 
 def auto_correlation(frequency_data):
     shift_zero = numpy.array(frequency_data)
@@ -41,13 +43,21 @@ def total_scan(data, keys):
     return picks
 
 def small_run(data, keys):
-    for i in range(620, 630):
+    for i in range(620, 623):
         single_run = sample_data['sample_1.txt'][times[i]]
+        squared_run = map(lambda x: x**2, single_run)
         filtered =  auto_correlation(single_run)
-        print(i, max_index(filtered))
-        figure, plots = pyplot.subplots(2, sharex=False, sharey=False)
+        fourierd = numpy.fft.fft(filtered)
+        print(i, max_index(filtered), max_index(fourierd))
+        figure, plots = pyplot.subplots(5, sharex=False, sharey=False)
         plots[0].plot(single_run)
         plots[1].plot(filtered)
+        plots[2].plot(fourierd)
+        plots[3].plot(numpy.fft.fft(single_run))
+        plots[4].plot(numpy.fft.fft(squared_run))
+        # peak = numpy.amax(filtered)
+        # plots[1].set_ylim([0,peak*1.1])
+        plots[3].set_ylim([-500,5000])
         pyplot.show()
     return
 
@@ -56,17 +66,25 @@ times = sorted(sample_data['sample_1.txt'].keys())
 
 single_run = sample_data['sample_1.txt'][times[695]]
 
-# sample1_processed = total_scan(sample_data['sample_1.txt'], times)
-# pyplot.plot(sample1_processed)
-# pyplot.show()
+sample1_processed = total_scan(sample_data['sample_1.txt'], times)
+pyplot.plot(sample1_processed)
+pyplot.show()
 
 # pyplot.plot(single_run)
 # pyplot.show()
 
 
+# filtered = auto_correlation(single_run)
 # pyplot.plot(
-#     auto_correlation(single_run)
+#     filtered
 #     )
 # pyplot.show()
+# fourierd = numpy.fft.fft(filtered)
+# pyplot.plot(
+#     fourierd
+#     )
+# pyplot.show()
+# print(max_index(filtered), max_index(fourierd))
 
-small_run(sample_data['sample_1.txt'], times)
+
+# small_run(sample_data['sample_1.txt'], times)
