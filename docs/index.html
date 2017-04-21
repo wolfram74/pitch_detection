@@ -22,7 +22,7 @@ window.onload = function(){
     <h2>physics</h2>
     <p>Neglecting transients a string supports oscillations of the form</p>
     <div class='eqn'>
-      $&\Sigma_{n=0}^\infty a_n sin(n*\omega_0 t)&$
+      $&\Sigma_{n=0}^\infty a_n e^{-Q_n t}sin(n*\omega_0 t)&$
     </div>
     <p>
       And sound waves to match.
@@ -30,12 +30,60 @@ window.onload = function(){
   <div>
     <h2>Data</h2>
     <p>
-      Taking the fourier transform from the web audio API described <a href="https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode">here</a> with samples set at 2^11 we get curves like
+      Taking the fourier transform from the web audio API described <a href="https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode">here</a> with size set at 2^11 reading from time series data sampled at 44.1k hz we get curves like
     </p>
     <img src="./imgs/figure_1.png" width='100%'>
     <p>
-      which is the curve for time 1426709547141 in sample_1.txt
+      which is the curve for time 1426709547141 in sample_1.txt, these curves have a bin width of ~21.5 hz.
     </p>
+  </div>
+  <div>
+    <p>
+      here is the full view of sample 1,
+    </p>
+    <img src="../records/sample_1.png" width="80%">
+    <p>
+      The region of interest is from line 390 to 900 where a chromatic scale is being played featuring 29 notes start at E81.
+    </p>
+    <img src="./imgs/sub_sample_1.png" width="80%">
+  </div>
+  <div>
+    <p>
+      The current approach involves first detrending the data by generating meta points for 2 adjacent 40-bin sections, calculating a line from those 2 points and subtracting it from the data.
+    </p>
+    <img src="./imgs/detrended_695.png">
+    <p>
+      Once detrended, the auto correlation is calculated.
+    <div class='eqn'>
+      $&F(x)F_0 = \int F(y)F(y-x)dy \approx \Sigma_{y=0}^{N-1} f(y)f((y+x)\%N) &$
+    </div>
+      Since on a guitar we don't expect frequencies in excess of 40 bins, the autocorrelation was only calculated out to 80.
+    </p>
+    <img src="./imgs/detrend_auto_cor_695.png">
+    <p>
+      By fiat it is assumed that the maxima of this curve would occur at intervals equal to the frequency of the fundamental. So once generated, the peaks are found by determining at what index (data[index]-data[index-1])*(data[index+1]-data[index]) and data[index+1]-data[index] are both less than 0. When these peaks are found, the simple average difference is taken to be true value of the fundamental.
+    </p>
+  </div>
+  <div>
+    <p>Applying this process to the interested region of sample_1 we get the following curve</p>
+    <img src="./imgs/fundamentals_sample_1.png">
+    <p>
+      despite the crudeness of the approach, the results agree with the expected values surprisingly well by visual inspection and turning the frequencies into notes as determined in the <a href="../records/data_loader.py">freq_to_note</a> method.
+    </p>
+  </div>
+  <div>
+    <h3>Further goals</h3>
+    <p>
+      As this much progress has been made without applying much physical reasoning beyond rough intuition, applying rigorous fitting techniques ought to provide substantial gains in precision and measurable accuracy. This would allow intelligent estimation of when the data being generated is still contaminated with transients from a pluck, or even being able to detect multiple notes played in parallel as would be needed for chord detection. Currently speed is not a pressing concern as the spectra takes 20ms to generate and is processed in ~1 ms.
+    </p>
+    <p>
+      The fourier transform package provided by numpy is proving less fruitful than I would have hoped as passing the detrended data through produces a plot like this
+    </p>
+    <img src="./imgs/fourier_detrend_695.png">
+    <p>
+      and applying it to the correlated data is slightly more evocative, but fitting something arbitrary like a gaussian to the smaller bump is not consistently more reliable than the average maxima gap method.
+    </p>
+    <img src="./imgs/fourier_detrend_cor_695.png">
   </div>
   </div>
     <div class='eqn'>
