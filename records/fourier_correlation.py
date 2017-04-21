@@ -62,13 +62,14 @@ def small_run(data, keys):
     return
 
 sample_data = data_loader.load_files()
+full_sample = sample_data['sample_1.txt']
 times = sorted(sample_data['sample_1.txt'].keys())
 
-single_run = sample_data['sample_1.txt'][times[695]]
+single_run = full_sample[times[695]]
 
-sample1_processed = total_scan(sample_data['sample_1.txt'], times)
-pyplot.plot(sample1_processed)
-pyplot.show()
+# sample1_processed = total_scan(sample_data['sample_1.txt'], times)
+# pyplot.plot(sample1_processed)
+# pyplot.show()
 
 # pyplot.plot(single_run)
 # pyplot.show()

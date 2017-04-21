@@ -1,6 +1,6 @@
 import os
 import re
-
+import numpy
 
 def max_index(data):
     # finds max index after positive derivatives found
@@ -39,3 +39,23 @@ def parse_file(address):
         time_stamp=formatted_line.pop(0)
         output[time_stamp] = formatted_line
     return output
+
+def maxima_finder(data):
+    peaks = []
+    last_delta = 0
+    for index in range(len(data)-1):
+        delta = data[index+1]-data[index]
+        # print(delta)
+        if delta < 0 and delta*last_delta<0:
+            peaks.append(index)
+        last_delta = delta
+    return peaks
+
+def freq_to_note(hertz):
+    #establishes 55 hz as note 0
+    notes = "A A+ B C C+ D D+ E F F+ G G+".split(' ')
+    n = 12*numpy.log(hertz/55)/numpy.log(2)
+    n_round = round(n)
+    octave = int(n_round/12)
+    note = int(n_round % 12)
+    return {'n_round': n_round, 'n': n, 'octave':octave, 'note':notes[note]}
