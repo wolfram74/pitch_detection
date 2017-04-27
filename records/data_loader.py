@@ -51,6 +51,17 @@ def maxima_finder(data):
         last_delta = delta
     return peaks
 
+def extrema_finder(data):
+    peaks = []
+    last_delta = 0
+    for index in range(len(data)-1):
+        delta = data[index+1]-data[index]
+        if delta*last_delta<0:
+            peaks.append(index)
+        last_delta = delta
+    return peaks
+
+
 def freq_to_note(hertz):
     #establishes 55 hz as note 0
     notes = "A A+ B C C+ D D+ E F F+ G G+".split(' ')

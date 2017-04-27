@@ -75,11 +75,11 @@ single_run = full_sample[times[695]]
 # pyplot.show()
 
 
-# filtered = auto_correlation(single_run)
-# pyplot.plot(
-#     filtered
-#     )
-# pyplot.show()
+filtered = auto_correlation(single_run)
+pyplot.plot(
+    filtered
+    )
+pyplot.show()
 # fourierd = numpy.fft.fft(filtered)
 # pyplot.plot(
 #     fourierd

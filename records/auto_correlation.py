@@ -5,7 +5,7 @@ import time
 def auto_correlation(frequency_data):
     output = []
     bin_count = len(frequency_data)
-    for n in range(bin_count):
+    for n in range(80):
         total = 0
         for offSet in range(bin_count-n):
             total += frequency_data[n]*frequency_data[offSet]
@@ -36,12 +36,12 @@ times = sorted(sample_data['sample_1.txt'].keys())
 
 single_run = sample_data['sample_1.txt'][times[695]]
 
-sample1_processed = total_scan(sample_data['sample_1.txt'], times)
-# pyplot.plot(single_run)
-# pyplot.show()
-
-pyplot.plot(sample1_processed)
+# sample1_processed = total_scan(sample_data['sample_1.txt'], times)
+pyplot.plot(single_run)
 pyplot.show()
 
-# pyplot.plot(auto_correlation(single_run))
+# pyplot.plot(sample1_processed)
 # pyplot.show()
+
+pyplot.plot(auto_correlation(single_run))
+pyplot.show()
