@@ -23,3 +23,10 @@ resulting binwidth is 21.5
 sample_1 features a chromatic scale
 scale starts around slice 390~ continues to slice 900~
 frequency starts at E81 ends 28 steps later at 81*4*2^(4/12)=432 or 19.4
+###
+facorio nuclear notes
+4 reactors produce .48 GW or 96GJ over a 200s fuel cycle
+48~ heat exchangers at .01 gw per exchanger make steam
+this could be stored as steam in 40~ tank
+83~ steam turbines at.0058 gw per turbine consume matching power
+5~ off shore pumps

@@ -61,6 +61,30 @@ def extrema_finder(data):
         last_delta = delta
     return peaks
 
+def quad_fitter(x2, y_vals):
+    #returns a,b,c for ax**2+bx+c assuming y_vals come from points adjacent to x2
+    a = (y_vals[0] / 2.0) - y_vals[1] + (y_vals[2] / 2.0)
+    b = x2*(
+            2*y_vals[1]-y_vals[0]-y_vals[2]
+        ) - (
+            y_vals[0]-y_vals[2]
+        )*0.5
+    c = x2**2*(
+            y_vals[0]*0.5- y_vals[1]+y_vals[2]*0.5
+        )+ x2*0.5*(
+            y_vals[0]-y_vals[2]
+        )+y_vals[1]
+    return [a, b, c]
+
+def linear_even_fit(data):
+    #will fit data to y=mx+0
+    #assumes data are measured at x=1,2, 3 ...
+    #returns m and (data-mx)**2/len(data)=sigma**2
+    total_data = sum(data)
+    N = len(data)
+    m = float(total_data)/(N*(N-1)/2.0)
+    sigma2 = sum([(data[i]-(i+1)*m)**2 for i in range(N)])/(N-2)
+    return {'fit':m, 'errorSquared':sigma2}
 
 def freq_to_note(hertz):
     #establishes 55 hz as note 0
