@@ -43,4 +43,19 @@ describe('Math utilities', function(){
       expect(PitchDetection.mathUtil.averageGap(values)).toEqual(1.5)
     })
   })
+  describe('detrender', function(){
+    it('should reduce contribution of linear trends', function(){
+      var data= []
+      var slope = -0.10;
+      var b = 2000
+      for(var index= 0; index<1000; index++){
+        data.push(b+slope*index+Math.cos(index/10))
+      };
+      var rawArea = data.reduce((a,b)=>{return a+b})
+      var detrended = PitchDetection.mathUtil.detrender(data, 80);
+      var detArea = detrended.reduce((a,b)=>{return a+b})
+      console.log(rawArea, detArea, detArea/rawArea)
+      expect(rawArea>detArea).toEqual(true)
+    })
+  })
 })
