@@ -1,0 +1,38 @@
+<html>
+<head>
+  <title>
+    testing pitch module
+  </title>
+</head>
+<body>
+<span>string 0, 82 string 1 110, string 2 146, string 3 196, string 4 246, string 5 329 </span>
+<br>
+<span id='fundamental'></span>
+<span id='note'></span>
+<span id='power'></span>
+</body>
+  <script src="./source.js"></script>
+  <script type="text/javascript">
+PitchDetection.initialize()
+var powerRecord = [0,0,0,0,0]
+var pitchRecord = [0,0,0,0,0]
+
+function threeDigStr(array){
+  var intVals = array.map((num)=>{return String(num).substring(0,4)*1})
+  return intVals
+}
+
+function guessNote(){
+  console.log(PitchDetection.vars.prepped)
+  if(!PitchDetection.vars.prepped){return};
+  var result = PitchDetection.getPitch()
+  powerRecord.shift()
+  powerRecord.push(result.totalPower)
+  pitchRecord.shift()
+  pitchRecord.push(result.calcedFreq)
+  document.querySelector('#fundamental').innerHTML = threeDigStr(pitchRecord).join(', ')
+}
+
+setInterval(guessNote, 200)
+  </script>
+</html>

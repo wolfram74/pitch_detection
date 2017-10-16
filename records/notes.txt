@@ -19,6 +19,9 @@ http://support.ircam.fr/docs/AudioSculpt/3.0/co/FFT%20Size.html
 
 resulting binwidth is 21.5
 
+note frequencies
+https://www.seventhstring.com/resources/notefrequencies.html
+
 ####
 sample_1 features a chromatic scale
 scale starts around slice 390~ continues to slice 900~

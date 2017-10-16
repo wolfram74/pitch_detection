@@ -16,13 +16,6 @@ describe('Math utilities', function(){
       expect(extremas).toEqual([6,10])
     })
   })
-  describe('Auto Correlation', function(){
-    it('it should calcuate Auto Correlation to some extent',function(){
-      var curve = [3,-2,1,-4,2]
-      var autoCor = PitchDetection.mathUtil.autoCorrelation(curve, 3)
-      expect(autoCor).toEqual([34, -14, -3])
-    })
-  })
   describe('quadratic fitter', function(){
     it('it should fit 3 even spaced data points to a quadratic curve', function(){
       var yvals = [3,7,-2]
@@ -35,6 +28,23 @@ describe('Math utilities', function(){
         ]
         expect(calced).toEqual(yvals)
       }
+    })
+  })
+  describe('Extrema Fitter', function(){
+    it('should take extrema and find their implied position', function(){
+      var curve = [0, 2, 1,0,3];
+      var extremas = PitchDetection.mathUtil.extremaFinder(curve);
+      expect(extremas).toEqual([1,3])
+      var fitExtrema = PitchDetection.mathUtil.fitExtrema(extremas, curve);
+      expect(fitExtrema[0]<fitExtrema[1]).toEqual(true)
+      expect(fitExtrema[0]).not.toEqual(extremas[0])
+    })
+  })
+  describe('Auto Correlation', function(){
+    it('it should calcuate Auto Correlation to some extent',function(){
+      var curve = [3,-2,1,-4,2]
+      var autoCor = PitchDetection.mathUtil.autoCorrelation(curve, 3)
+      expect(autoCor).toEqual([34, -14, -3])
     })
   })
   describe('average gap',function(){

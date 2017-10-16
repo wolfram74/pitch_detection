@@ -1,6 +1,15 @@
 var PitchDetection = (function(){
   console.log('Pitch detector loaded')
   var API = {}
+  API.vars = {
+    context: undefined,
+    fft: undefined,
+    samplePow:undefined,
+    timeSampleRate: undefined,
+    fftSampleSize:undefined,
+    binWidth: 0,
+    prepped: false,
+  }
   API.mathUtil = (function(){
     var mAPI = {}
     mAPI.detrender = function(array, window){
@@ -64,6 +73,16 @@ var PitchDetection = (function(){
       return [a, b, c]
     }
 
+    mAPI.fitExtrema = function(extrema, data){
+      var fitVals = []
+      for(var ind=0; ind < extrema.length; ind++){
+        var x2 = extrema[ind]
+        var fitCoEffs = this.quadFit(x2, data.slice(x2-1, x2+2))
+        fitVals.push(-1.0*fitCoEffs[1]/(2.0*fitCoEffs[0]))
+      }
+      return fitVals
+    }
+
     mAPI.averageGap = function(array){
       var total = array[0]
       for(var ind=1; ind<array.length; ind++){
@@ -74,7 +93,43 @@ var PitchDetection = (function(){
     return mAPI
   })()
   API.initialize = function(powers){
-    if(typeof(powers)==='undefined'){powers=11}
+    if(typeof(powers)==='undefined'){powers=11};
+    this.vars.samplePow = powers
+    navigator.getUserMedia({
+      audio:true
+    }, this.setUpStream.bind(this), this.error)
+  }
+
+  API.setUpStream = function(stream){
+    console.log(this, this.vars)
+    this.vars.context = new AudioContext();
+    var timeDataStream = this.vars.context.createMediaStreamSource(stream);
+    this.vars.timeSampleRate = this.vars.context.sampleRate;
+    this.vars.fft = this.vars.context.createAnalyser();
+    this.vars.fftSampleSize = Math.pow(2, this.vars.samplePow);
+    timeDataStream.connect(this.vars.fft)
+    this.vars.fft.fftSize = this.vars.fftSampleSize;
+    this.vars.binWidth = this.vars.timeSampleRate/this.vars.fftSampleSize;
+    this.vars.prepped = true;
+  }
+
+  API.error = function(err){
+    console.log("error of the type:" + err)
+  }
+
+  API.getPitch = function(){
+    var bins = new Uint8Array(this.vars.fft.frequencyBinCount)
+    // this.vars.fft.getByteTimeDomainData(bins)
+    this.vars.fft.getByteFrequencyData(bins)
+    var detrendedFreqData = this.mathUtil.detrender(bins)
+    var autoCorrelFreqData = this.mathUtil.autoCorrelation(detrendedFreqData, 80)
+    var extrema = this.mathUtil.extremaFinder(autoCorrelFreqData)
+    var fitExtrema = this.mathUtil.fitExtrema(extrema, autoCorrelFreqData)
+    var averageGap = this.mathUtil.averageGap(fitExtrema)
+    var calcedFreq = averageGap*2*this.vars.binWidth;
+    // console.log(this.vars.binWidth, calcedFreq*this.vars.binWidth)
+    var totalPower = bins.reduce((a,b)=>{return a+b*b})
+    return {calcedFreq:calcedFreq, totalPower:totalPower}
   }
   return API
 })()
@@ -90,10 +145,10 @@ and
   extrema indices, the value associated and their neighboring values passed into quad fit to get quadratic coefficients
   quadratic coefficients used to calculate sub-integer extrema location
   sub_integer extrema locations passed into averageGap
-  calced_freq returned as 2*averageGap result
+  calcedFreq returned as 2*averageGap result
 intended use for module
   initialize function that takes as an argument what power of 2 bins it uses
     defaults to 11
     sets a few module variables like bin width, the sound analyzer module
-  getPitch function, takes no argument, returns best guess for fundamental or 0 for insufficient power
+  getPitch function, takes no argument, returns best guess for fundamental or 0 for insufficient power and total power of frequency data
 */
