@@ -129,7 +129,7 @@ var PitchDetection = (function(){
     var calcedFreq = averageGap*2*this.vars.binWidth;
     // console.log(this.vars.binWidth, calcedFreq*this.vars.binWidth)
     var totalPower = bins.reduce((a,b)=>{return a+b*b})
-    return {calcedFreq:calcedFreq, totalPower:totalPower}
+    return {calcedFreq:calcedFreq, totalPower:totalPower, freqData:bins}
   }
   return API
 })()

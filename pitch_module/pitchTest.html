@@ -7,32 +7,106 @@
 <body>
 <span>string 0, 82 string 1 110, string 2 146, string 3 196, string 4 246, string 5 329 </span>
 <br>
-<span id='fundamental'></span>
-<span id='note'></span>
-<span id='power'></span>
+<canvas width = 600 height = 200  id='spectra'></canvas>
+  <br>
+  <span>spectragram</span>
+  <br>
+<canvas width = 600 height = 200  id='power'></canvas>
+  <br>
+  <span>8*log(total power)</span>
+  <br>
+<canvas width = 600 height = 400 id='fundamental'></canvas>
+  <br>
+  <span>calculated fundamental</span>
 </body>
-  <script src="./source.js"></script>
-  <script type="text/javascript">
+<script src="./source.js"></script>
+<script type="text/javascript">
 PitchDetection.initialize()
-var powerRecord = [0,0,0,0,0]
-var pitchRecord = [0,0,0,0,0]
-
+var spectraRecord = []
+var pitchRecord = []
+var powerRecord = []
+var sampleNum = 0
+var baseWidth = 600
 function threeDigStr(array){
   var intVals = array.map((num)=>{return String(num).substring(0,4)*1})
   return intVals
+}
+
+function drawColumn(colNum){
+  var canvas = document.querySelector("#spectra");
+  var context = canvas.getContext("2d") ;
+  var height = context.canvas.clientHeight
+  var image = context.createImageData(1,height)
+  var fft = spectraRecord[colNum]
+  for(y=0; y< height; y++){
+    var colors = colorMap(fft[y]);
+    image.data[4*(height-y)+0]=colors[0];
+    image.data[4*(height-y)+1]=colors[1];
+    image.data[4*(height-y)+2]=colors[2];
+    image.data[4*(height-y)+3]=255;
+  };
+  context.putImageData(image,colNum,0);
+}
+
+
+function colorMap(number){
+  if (number ==0){return [0,0,0]};
+  var norm = number/255
+  var g = -((norm+0.5)*(norm-0.5)*4)
+  var r = -((norm-0.5)*(norm-1.5)*4)
+  var b = -((norm)*(norm-1)*4)
+  return [255*r, 255*g, 255*b]
+}
+
+function plotPower(){
+  var canvas = document.querySelector("#power")
+  var context = canvas.getContext('2d')
+  var height = context.canvas.clientHeight
+  context.clearRect(0,0, baseWidth, height)
+  context.fillStyle = "#000"
+  for(var ind=0; ind<powerRecord.length ;ind++){
+    var y = height-8*Math.log(powerRecord[ind])
+    console.log(height, y, 8*Math.log(powerRecord[ind]))
+    var x = ind
+    context.beginPath()
+    context.arc(x, y, 2, 0, Math.PI*2)
+    context.fill()
+  }
+}
+
+function plotFundamental(){
+  var canvas = document.querySelector("#fundamental")
+  var context = canvas.getContext('2d')
+  var height = context.canvas.clientHeight
+  context.clearRect(0,0, baseWidth, height)
+  context.fillStyle = "#000"
+  for(var ind=0; ind<powerRecord.length ;ind++){
+    var y = height-pitchRecord[ind]
+    var x = ind
+    context.beginPath()
+    context.arc(x, y, 2, 0, Math.PI*2)
+    context.fill()
+  }
 }
 
 function guessNote(){
   console.log(PitchDetection.vars.prepped)
   if(!PitchDetection.vars.prepped){return};
   var result = PitchDetection.getPitch()
-  powerRecord.shift()
-  powerRecord.push(result.totalPower)
-  pitchRecord.shift()
-  pitchRecord.push(result.calcedFreq)
-  document.querySelector('#fundamental').innerHTML = threeDigStr(pitchRecord).join(', ')
+  spectraRecord[sampleNum%baseWidth] = result.freqData
+  pitchRecord[sampleNum%baseWidth] = result.calcedFreq
+  powerRecord[sampleNum%baseWidth] = result.totalPower
+  drawColumn(sampleNum%baseWidth)
+  plotPower()
+  plotFundamental()
+  sampleNum+=1
 }
 
-setInterval(guessNote, 200)
-  </script>
+setInterval(guessNote, 100)
+</script>
+<style type="text/css">
+  canvas {
+    border: 1px solid black;
+  }
+</style>
 </html>
