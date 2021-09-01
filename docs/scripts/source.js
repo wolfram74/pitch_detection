@@ -95,9 +95,12 @@ var PitchDetection = (function(){
   API.initialize = function(powers){
     if(typeof(powers)==='undefined'){powers=11};
     this.vars.samplePow = powers
-    navigator.getUserMedia({
-      audio:true
-    }, this.setUpStream.bind(this), this.error)
+    // navigator.mediaDevices.getUserMedia({
+    //   audio:true
+    // }, this.setUpStream.bind(this), this.error)
+    navigator.mediaDevices.getUserMedia({audio: true})
+    .then(this.setUpStream.bind(this)).catch(this.error)
+
   }
 
   API.setUpStream = function(stream){
